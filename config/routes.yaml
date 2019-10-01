@@ -1,3 +1,7 @@
-index:
+app.home:
     path: /
+    controller: App\Controller\TaskController::index
+
+app.home2:
+    path: /2
     controller: App\Controller\TaskController::index
