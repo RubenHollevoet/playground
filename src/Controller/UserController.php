@@ -4,21 +4,23 @@
 namespace App\Controller;
 
 
+use App\Service\FacebookUserProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractController
 {
-    public function loginAction()
+    private $facebookUserProvider;
+
+    /**
+     * UserController constructor.
+     */
+    public function __construct(FacebookUserProvider $facebookUserProvider)
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
+        $this->facebookUserProvider = $facebookUserProvider;
+    }
 
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        return $this->render('user/login.html.twig', [
-            'fbLoginUrl' => $this->container->get('app.service.facebook_user_provider')->getLoginUrl(),
-            'error' => $error,
-        ]);
+    public function loginResponse() {
+        return $this->facebookUserProvider->handleResponse();
     }
 }

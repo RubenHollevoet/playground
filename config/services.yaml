@@ -36,4 +36,4 @@ services:
 
     app.service.facebook_user_provider:
         class: App\Service\FacebookUserProvider
-        autowire: false
+        autowire: true

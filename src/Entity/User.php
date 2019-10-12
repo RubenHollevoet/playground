@@ -8,12 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  */
-class User
+class User implements UserInterface
 {
     use Timestampable;
     use SoftDeleteable;
@@ -154,5 +155,26 @@ class User
         }
 
         return $this;
+    }
+
+
+    public function getUsername()
+    {
+        return $this->firstName.' '.$this->lastName;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getPassword()
+    {
+        return '';
     }
 }

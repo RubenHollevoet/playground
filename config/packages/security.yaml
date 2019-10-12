@@ -2,15 +2,22 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         in_memory: { memory: null }
+#        users:
+#            entity:
+#                # the class of the entity that represents users
+#                class: 'App\Entity\User'
+#                # the property to query by - e.g. username, email, etc
+#                property: 'username'
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-#        main:
-#            anonymous: ~
-#            guard:
-#                authenticators:
-#                    - app.security.facebook_form_authenticator #this calls the authenticator service every page load
+        main:
+            anonymous: ~
+            guard:
+                authenticators:
+                    - app.security.facebook_form_authenticator #this calls the authenticator service every page load
+
 #                entry_point: App\security\FacebookFormAuthenticator
 #            logout:
 #                path: /logout
@@ -29,4 +36,4 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/admin, roles: ROLE_USER }

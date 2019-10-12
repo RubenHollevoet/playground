@@ -5,3 +5,5 @@ easy_admin:
         - App\Entity\Task
         - App\Entity\Subscription
         - App\Entity\QrCode
+    user:
+        name_property_path: 'username'
