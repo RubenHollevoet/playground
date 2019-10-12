@@ -1,16 +1,24 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('css/home.css') }}">
 {% endblock %}
 
 {% block body %}
 {#    <h1>home</h1>#}
 
+<div class="homeLayout">
     <img class="banner" src="{{ asset('assets/playground.svg') }}" alt="logo">
 
     <h1 class="focus-in-contract-bck">Playground</h1>
 
-{% endblock %}
+    <div class="mainLayout">
+    <p>Comming Soon</p>
+    <p id="subtext">Voorjaar 2020</p>
+    </div>
+</div>
 
+
+
+{% endblock %}

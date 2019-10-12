@@ -1,9 +1,44 @@
+:root{
+    --primaryColor: #eee;
+    --secondaryColor: #888;
+}
+
 h1 {
-    color: #eee;
-    font-size: 6rem;
+    grid-area: titel;
+    color: var(--primaryColor);
+    font-size: 9rem;
     text-align: center;
 }
 
 .banner {
-    width: 80%;
+    grid-area: logo;
+    width: 25%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mainLayout {
+    grid-area: main;
+    color: var(--primaryColor);
+    font-size: 3rem;
+    margin-top: 1em;
+    text-align: center;
+}
+
+
+#subtext {
+        font-size: 2rem;
+        font-style: italic;
+}
+
+footer {
+    grid-area: footer;
+}
+
+.homeLayout {
+    display: grid;
+    grid-template-columns: 2, 1fr;
+    grid-auto-rows: minmax(auto);
+    grid-template-areas: "logo ""titel" "main" "footer";
 }
