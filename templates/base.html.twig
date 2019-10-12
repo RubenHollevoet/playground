@@ -3,9 +3,22 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+        <nav>
+            <ul>
+                <li><a href="{{ path('app.game.home') }}"><img src="{{ asset('assets/playground.svg') }}" alt="logo" width="56" height="56"></a></li>
+                <li><a href="{{ path('app.game.tasks') }}">Opdrachten</a></li>
+                <li><a href="{{ path('app.game.events') }}">Kalender</a></li>
+                <li><a href="{{ path('app.game.leaderboard') }}">Scorebord</a></li>
+                <li><a href="{{ path('app.game.rewards') }}">Prijzen</a></li>
+                <li><a href="{{ path('app.game.rules') }}">Regels</a></li>
+                <li><a href="{{ path('easyadmin') }}">Admin</a></li>
+            </ul>
+        </nav>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>

@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Opdrachten</h1>
+
+    {% for task in tasks %}
+        <li>{{ task.name }} - <small>{{ task.score }} punten</small></li>
+    {% endfor %}
+{% endblock %}

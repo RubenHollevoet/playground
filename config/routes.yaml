@@ -1,6 +1,26 @@
-app.home:
+app.game.home:
     path: /
     controller: App\Controller\GameController::index
+
+app.game.tasks:
+    path: /tasks
+    controller: App\Controller\GameController::tasks
+
+app.game.rewards:
+    path: /rewards
+    controller: App\Controller\GameController::rewards
+
+app.game.events:
+    path: /events
+    controller: App\Controller\GameController::events
+
+app.game.rules:
+    path: /rules
+    controller: App\Controller\GameController::rules
+
+app.game.leaderboard:
+    path: /leaderboard
+    controller: App\Controller\GameController::leaderboard
 
 app.user.login:
     path: /login
