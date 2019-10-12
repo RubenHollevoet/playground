@@ -6,4 +6,5 @@
     {% for task in tasks %}
         <li>{{ task.name }} - <small>{{ task.score }} punten</small></li>
     {% endfor %}
+    {{dump(tasks)}}
 {% endblock %}
