@@ -24,6 +24,15 @@
             </ul>
         </nav>
 
+        {% if app.user %}
+            <div>
+                <img src="{{ app.user.picture|default(asset('assets/profile_placeholder.png')) }}"
+                     class="profilePicture"
+                     alt="profile picture" width="42" height="42">
+                {{ app.user.username }}
+            </div>
+        {% endif %}
+
         {% for label, messages in app.flashes %}
             {% for message in messages %}
                 <div class="alert alert-{{ label }}">

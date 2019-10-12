@@ -8,8 +8,10 @@
 {% block body %}
 {#    <h1>home</h1>#}
 
+    {% if not app.user %}
     <a href="{{ fbLoginUrl }}" target="_top" class="fb-login-btn"><span class="fa fa-facebook"></span>Login
         met Facebook</a>
+    {% endif %}
 
     <img class="banner" src="{{ asset('assets/playground.svg') }}" alt="logo">
 
