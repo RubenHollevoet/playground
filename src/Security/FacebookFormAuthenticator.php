@@ -11,6 +11,7 @@ namespace App\Security;
 
 use App\Entity\User;
 use App\Service\FacebookUserProvider;
+use Doctrine\DBAL\Types\VarDateTimeImmutableType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,7 +42,7 @@ class FacebookFormAuthenticator extends AbstractGuardAuthenticator
     use TargetPathTrait;
 
     private $em;
-//    private $router;
+    private $router;
     private $facebookUserProvider;
     /**
      * @var TokenStorage
@@ -55,7 +56,7 @@ class FacebookFormAuthenticator extends AbstractGuardAuthenticator
     public function __construct(EntityManagerInterface $em, RouterInterface $router, TokenStorageInterface $tokenStorage, FacebookUserProvider $facebookUserProvider, SessionInterface $session, FlashBagInterface $flashBag)
     {
         $this->em = $em;
-//        $this->router = $router;
+        $this->router = $router;
         $this->facebookUserProvider = $facebookUserProvider;
         $this->tokenStorage = $tokenStorage;
         $this->session = $session;
@@ -70,30 +71,16 @@ class FacebookFormAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-
-        return $this->session->has('fb_access_token');
-
-//        return $this->tokenStorage->getToken();
-
-//        return $request->headers->has('X-AUTH-TOKEN');
-
-//        return true;
+        return ($this->tokenStorage->getToken() === null) && $this->session->has('fb_access_token');
     }
 
     public function getCredentials(Request $request)
     {
-//        return 'ok';
-
-//        dump($this->facebookUserProvider->getCurrentUser()); die;
-
         return $this->facebookUserProvider->getCurrentUser();
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        return $this->em->getRepository(User::class)
-            ->find(1);
-
         $fbUserId = $credentials['id'];
 
         if(!$this->facebookUserProvider->createOrUpdateUser($credentials)) {
@@ -103,7 +90,7 @@ class FacebookFormAuthenticator extends AbstractGuardAuthenticator
         }
 
         return $this->em->getRepository(User::class)
-            ->findOneBy(['fb_userId' => $fbUserId]);
+            ->findOneBy(['fbId' => $fbUserId]);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -111,22 +98,14 @@ class FacebookFormAuthenticator extends AbstractGuardAuthenticator
         return true;
     }
 
-//    protected function getLoginUrl()
-//    {
-//        return $this->router->generate('security_login');
-//    }
-
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return null;
-
-
         // if the user hits a secure page and start() was called, this was
         // the URL they were on, and probably where you want to redirect to
         $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
 
         if (!$targetPath) {
-            $targetPath = $this->router->generate('expenses');
+            $targetPath = $this->router->generate('app.game.home');
         }
 
         return new RedirectResponse($targetPath);
@@ -134,7 +113,9 @@ class FacebookFormAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
+        $this->flashBag->add('danger', 'Probleem bij het idenificeren.');
 
+        return new RedirectResponse('/');
     }
 
     /**

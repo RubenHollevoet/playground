@@ -47,7 +47,7 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $fbId;
 

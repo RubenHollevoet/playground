@@ -1,7 +1,8 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: null }
+        our_users:
+            entity: { class: App\Entity\User, property: email }
 #        users:
 #            entity:
 #                # the class of the entity that represents users
@@ -19,8 +20,8 @@ security:
                     - app.security.facebook_form_authenticator #this calls the authenticator service every page load
 
 #                entry_point: App\security\FacebookFormAuthenticator
-#            logout:
-#                path: /logout
+            logout:
+                path: /logout
 #            remember_me:
 #                secret:   '%APP_SECRET%'
 #                lifetime: 31557600 # 1 year in seconds

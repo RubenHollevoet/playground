@@ -88,21 +88,15 @@ class FacebookUserProvider
             exit;
         }
 
-        // Logged in
-//         echo '<h3>Access Token</h3>';
-//         var_dump($accessToken->getValue());
-
         // The OAuth 2.0 client handler helps us manage access tokens
         $oAuth2Client = $fb->getOAuth2Client();
 
         // Get the access token metadata from /debug_token
         $tokenMetadata = $oAuth2Client->debugToken($accessToken);
-//        echo '<h3>Metadata</h3>';
-//        var_dump($tokenMetadata);
+
         // Validation (these will throw FacebookSDKException's when they fail)
         $tokenMetadata->validateAppId($this->param_facebook_app_id); // Replace {app-id} with your app id
         // If you know the user ID this access token belongs to, you can validate it here
-        //$tokenMetadata->validateUserId('123');
         $tokenMetadata->validateExpiration();
 
         if (! $accessToken->isLongLived()) {
@@ -110,12 +104,9 @@ class FacebookUserProvider
             try {
                 $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
             } catch (FacebookSDKException $e) {
-//                echo "<p>Error getting long-lived access token: " . $helper->getMessage() . "</p>\n\n";
+                echo "<p>Error getting long-lived access token: " . $helper->getMessage() . "</p>\n\n";
                 exit;
             }
-
-//            echo '<h3>Long-lived</h3>';
-//            var_dump($accessToken->getValue());
         }
 
         $this->session->set('fb_access_token', (string) $accessToken);
@@ -154,7 +145,7 @@ class FacebookUserProvider
 
     public function createOrUpdateUser($credentials) {
 
-        $user = $this->em->getRepository(User::class)->findOneBy(['fb_userId' => $credentials->getId()]);
+        $user = $this->em->getRepository(User::class)->findOneBy(['fbId' => $credentials->getId()]);
 
         if(!$user) {
             $user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials->getField('email')]);
@@ -162,8 +153,8 @@ class FacebookUserProvider
 
         if($user) {
             //if account doesn't have a FB ID yet (if it has been created using standard method), add it
-            if(!$user->getFbUserId()) {
-                $user->setFbUserId($credentials->getId());
+            if(!$user->getFbId()) {
+                $user->setFbId($credentials->getId());
                 $this->em->persist($user);
                 $this->em->flush();
 
@@ -172,18 +163,15 @@ class FacebookUserProvider
         }
         else {
             $user = new User();
-            // $regionUrl = $_SERVER['HTTP_HOST']
-//            $this->em->getRepository(Region::class)->findBy(['url' => $regionUrl]);
-            $user->setRegion($this->em->getRepository(Region::class)->find(0));
             $user->setFirstName($credentials->getFirstName());
             $user->setLastName($credentials->getLastName());
             $user->setEmail($credentials->getField('email'));
-            $user->setFbUserId($credentials->getId());
+            $user->setFbId($credentials->getId());
             $user->setRoles(['ROLE_USER']);
 
             $this->session->getFlashBag()->add('success', 'Goed nieuws! We hebben je account succesvol aangemaakt!');
         }
-
+/*
         if(!$user->getPicture()) {
             //upload profile picture
             $folder = '/uploads/profile/';
@@ -197,7 +185,7 @@ class FacebookUserProvider
             file_put_contents($uploadPath.$folder.$fileName, fopen($credentials->getPicture()->getUrl(), 'r'));
 
             $user->setPicture($folder.$fileName);
-        }
+        }*/
 
         //persist user
         $this->em->persist($user);
@@ -228,12 +216,10 @@ class FacebookUserProvider
 
     private function getFacebook() {
 
-//        session_start();
         $fb = new Facebook([
             'app_id' => $this->param_facebook_app_id,
             'app_secret' => $this->param_facebook_app_secret,
             'default_graph_version' => 'v2.2',
-//            'persistent_data_handler'=>'session'
         ]);
 
         return $fb;
