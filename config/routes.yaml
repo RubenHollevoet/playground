@@ -1,7 +1,7 @@
 app.home:
     path: /
-    controller: App\Controller\TaskController::index
+    controller: App\Controller\GameController::index
 
-app.home2:
-    path: /2
-    controller: App\Controller\TaskController::index
+app.user.login:
+    path: /login
+    controller: App\Controller\UserController::login
