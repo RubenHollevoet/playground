@@ -6,29 +6,29 @@
 h1 {
     grid-area: titel;
     color: var(--primaryColor);
-    font-size: 9rem;
+    font-size: 42px;
     text-align: center;
 }
 
 .banner {
     grid-area: logo;
-    width: 25%;
+    width: 90px;
     height: auto;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 2em;
 }
 
 .mainLayout {
     grid-area: main;
     color: var(--primaryColor);
-    font-size: 3rem;
+    font-size: 32px;
     margin-top: 1em;
     text-align: center;
 }
 
-
 #subtext {
-        font-size: 2rem;
+        font-size: 25px;
         font-style: italic;
 }
 
@@ -41,8 +41,8 @@ footer {
     color: var(--primaryColor);
 }
 
-
 .homeLayout {
+    margin-top: 96px;
     display: grid;
     grid-template-columns: 4, 1fr;
     grid-auto-rows: minmax(auto);
@@ -54,4 +54,21 @@ footer {
     ". . . facebook"
     "footer footer footer footer";
 }
+
+@media only screen and (min-width: 600px) {
+    h1 {
+        font-size: 7rem;
+    }
+
+    .mainLayout {
+        font-size: 3rem;
+    }
+
+    #subtext {
+        font-size: 2rem;
 }
+
+.banner {
+    width: 350px;
+}
+  }
