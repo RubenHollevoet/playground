@@ -23,5 +23,5 @@ app.game.leaderboard:
     controller: App\Controller\GameController::leaderboard
 
 app.user.login:
-    path: /login
-    controller: App\Controller\UserController::login
+    path: /facebookResponse
+    controller: App\Controller\UserController::loginResponse

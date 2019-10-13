@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Exceptions\FacebookSDKException;
@@ -22,6 +23,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class FacebookUserProvider
 {
+
     private $param_facebook_oauth_redirect;
     private $param_facebook_app_id;
     private $param_facebook_app_secret;
@@ -46,10 +48,10 @@ class FacebookUserProvider
     public function __construct(EntityManagerInterface $em, SessionInterface $session, RouterInterface $router, ParameterBagInterface $parameterBag)
     {
         $this->em = $em;
-        $this->param_facebook_oauth_redirect = $parameterBag->get('facebook_oauth_redirect');
-        $this->param_facebook_app_id = $parameterBag->get('facebook_app_id');
-        $this->param_facebook_app_secret = $parameterBag->get('facebook_app_secret');
-        $this->param_upload_directory = $parameterBag->get('upload_directory');
+        $this->param_facebook_oauth_redirect = $_SERVER['FACEBOOK_REDIRECT'];
+        $this->param_facebook_app_id = $_SERVER['FACEBOOK_APP_ID'];
+        $this->param_facebook_app_secret = $_SERVER['FACEBOOK_APP_SECRET'];
+//        $this->param_upload_directory = $parameterBag->get('upload_directory');
         $this->session = $session;
         $this->router = $router;
     }
@@ -68,7 +70,7 @@ class FacebookUserProvider
             exit;
         } catch(FacebookSDKException $e) {
             // When validation fails or other local issues
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            echo '.. Facebook SDK returned an error: ' . $e->getMessage();
             exit;
         }
 
@@ -86,21 +88,15 @@ class FacebookUserProvider
             exit;
         }
 
-        // Logged in
-//         echo '<h3>Access Token</h3>';
-//         var_dump($accessToken->getValue());
-
         // The OAuth 2.0 client handler helps us manage access tokens
         $oAuth2Client = $fb->getOAuth2Client();
 
         // Get the access token metadata from /debug_token
         $tokenMetadata = $oAuth2Client->debugToken($accessToken);
-//        echo '<h3>Metadata</h3>';
-//        var_dump($tokenMetadata);
+
         // Validation (these will throw FacebookSDKException's when they fail)
         $tokenMetadata->validateAppId($this->param_facebook_app_id); // Replace {app-id} with your app id
         // If you know the user ID this access token belongs to, you can validate it here
-        //$tokenMetadata->validateUserId('123');
         $tokenMetadata->validateExpiration();
 
         if (! $accessToken->isLongLived()) {
@@ -108,17 +104,14 @@ class FacebookUserProvider
             try {
                 $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
             } catch (FacebookSDKException $e) {
-//                echo "<p>Error getting long-lived access token: " . $helper->getMessage() . "</p>\n\n";
+                echo "<p>Error getting long-lived access token: " . $helper->getMessage() . "</p>\n\n";
                 exit;
             }
-
-//            echo '<h3>Long-lived</h3>';
-//            var_dump($accessToken->getValue());
         }
 
         $this->session->set('fb_access_token', (string) $accessToken);
 
-        return new RedirectResponse($this->router->generate('expenses'));
+        return new RedirectResponse($this->router->generate('app.game.home'));
     }
 
     public function getCurrentUser()
@@ -152,16 +145,16 @@ class FacebookUserProvider
 
     public function createOrUpdateUser($credentials) {
 
-        $user = $this->em->getRepository('AppBundle:User')->findOneBy(['fb_userId' => $credentials->getId()]);
+        $user = $this->em->getRepository(User::class)->findOneBy(['fbId' => $credentials->getId()]);
 
         if(!$user) {
-            $user = $this->em->getRepository('AppBundle:User')->findOneBy(['email' => $credentials->getField('email')]);
+            $user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials->getField('email')]);
         }
 
         if($user) {
             //if account doesn't have a FB ID yet (if it has been created using standard method), add it
-            if(!$user->getFbUserId()) {
-                $user->setFbUserId($credentials->getId());
+            if(!$user->getFbId()) {
+                $user->setFbId($credentials->getId());
                 $this->em->persist($user);
                 $this->em->flush();
 
@@ -170,32 +163,29 @@ class FacebookUserProvider
         }
         else {
             $user = new User();
-            // $regionUrl = $_SERVER['HTTP_HOST']
-//            $this->em->getRepository(Region::class)->findBy(['url' => $regionUrl]);
-            $user->setRegion($this->em->getRepository(Region::class)->find(0));
             $user->setFirstName($credentials->getFirstName());
             $user->setLastName($credentials->getLastName());
             $user->setEmail($credentials->getField('email'));
-            $user->setFbUserId($credentials->getId());
+            $user->setFbId($credentials->getId());
             $user->setRoles(['ROLE_USER']);
 
             $this->session->getFlashBag()->add('success', 'Goed nieuws! We hebben je account succesvol aangemaakt!');
         }
-
+/*
         if(!$user->getPicture()) {
             //upload profile picture
             $folder = '/uploads/profile/';
-            $uploadPath = $this->param_upload_directory;
-            if(!is_dir($uploadPath.$folder))
-            {
-                mkdir($uploadPath.$folder, 0777, true);
-            }
+//            $uploadPath = $this->param_upload_directory;
+//            if(!is_dir($uploadPath.$folder))
+//            {
+//                mkdir($uploadPath.$folder, 0777, true);
+//            }
 
             $fileName = (string)$credentials->getId().'-avatar.jpg';
             file_put_contents($uploadPath.$folder.$fileName, fopen($credentials->getPicture()->getUrl(), 'r'));
 
             $user->setPicture($folder.$fileName);
-        }
+        }*/
 
         //persist user
         $this->em->persist($user);
@@ -225,6 +215,7 @@ class FacebookUserProvider
     }
 
     private function getFacebook() {
+
         $fb = new Facebook([
             'app_id' => $this->param_facebook_app_id,
             'app_secret' => $this->param_facebook_app_secret,

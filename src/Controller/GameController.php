@@ -4,14 +4,19 @@
 namespace App\Controller;
 
 
+use App\Service\FacebookUserProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class GameController extends AbstractController
 {
-    public function index() : Response
+    public function index(FacebookUserProvider $facebookUserProvider) : Response
     {
-        return $this->render('game/home.html.twig');
+        $FbLoginUrl = $facebookUserProvider->getLoginUrl();
+
+        return $this->render('game/home.html.twig', [
+            'fbLoginUrl' => $FbLoginUrl
+        ]);
     }
 
     public function tasks() : Response

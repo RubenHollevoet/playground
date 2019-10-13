@@ -9,12 +9,17 @@
 namespace App\Security;
 
 
+use App\Entity\User;
 use App\Service\FacebookUserProvider;
+use Doctrine\DBAL\Types\VarDateTimeImmutableType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -22,6 +27,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -31,38 +37,46 @@ use Facebook\Exceptions\FacebookSDKException;
 use Facebook\Facebook;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class FacebookFormAuthenticator
+class FacebookFormAuthenticator extends AbstractGuardAuthenticator
 {
     use TargetPathTrait;
 
     private $em;
     private $router;
     private $facebookUserProvider;
-    private $session;
     /**
      * @var TokenStorage
      */
     private $tokenStorage;
 
-    public function __construct(EntityManagerInterface $em, RouterInterface $router, TokenStorageInterface $tokenStorage, FacebookUserProvider $facebookUserProvider, SessionInterface $session)
+    private $flashBag;
+
+    private $session;
+
+    public function __construct(EntityManagerInterface $em, RouterInterface $router, TokenStorageInterface $tokenStorage, FacebookUserProvider $facebookUserProvider, SessionInterface $session, FlashBagInterface $flashBag)
     {
         $this->em = $em;
         $this->router = $router;
         $this->facebookUserProvider = $facebookUserProvider;
         $this->tokenStorage = $tokenStorage;
         $this->session = $session;
+
+        $this->flashBag = $flashBag;
+    }
+
+    /**
+     * Called on every request to decide if this authenticator should be
+     * used for the request. Returning false will cause this authenticator
+     * to be skipped.
+     */
+    public function supports(Request $request)
+    {
+        return ($this->tokenStorage->getToken() === null) && $this->session->has('fb_access_token');
     }
 
     public function getCredentials(Request $request)
     {
-        if($this->tokenStorage->getToken())
-        {
-            return;
-        }
-
-        $fbUser = $this->facebookUserProvider->getCurrentUser();
-
-        return $fbUser;
+        return $this->facebookUserProvider->getCurrentUser();
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
@@ -75,18 +89,13 @@ class FacebookFormAuthenticator
             $this->session->getFlashBag()->add('error', 'Er liep iets mis, je Facebook profiel kon helaas niet geregistreerd worden. Neem contact op met Kazou indien het probleem zich blijft voordoen.');
         }
 
-        return $this->em->getRepository('AppBundle:User')
-            ->findOneBy(['fb_userId' => $fbUserId]);
+        return $this->em->getRepository(User::class)
+            ->findOneBy(['fbId' => $fbUserId]);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
         return true;
-    }
-
-    protected function getLoginUrl()
-    {
-        return $this->router->generate('security_login');
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
@@ -96,9 +105,31 @@ class FacebookFormAuthenticator
         $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
 
         if (!$targetPath) {
-            $targetPath = $this->router->generate('expenses');
+            $targetPath = $this->router->generate('app.game.home');
         }
 
         return new RedirectResponse($targetPath);
+    }
+
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        $this->flashBag->add('danger', 'Probleem bij het idenificeren.');
+
+        return new RedirectResponse('/');
+    }
+
+    /**
+     * Called when authentication is needed, but it's not sent
+     */
+    public function start(Request $request, AuthenticationException $authException = null)
+    {
+        $this->flashBag->add('danger', 'Je hebt niet de juiste rechten deze pagina te bekijken.');
+
+        return new RedirectResponse('/');
+    }
+
+    public function supportsRememberMe()
+    {
+        return false;
     }
 }
