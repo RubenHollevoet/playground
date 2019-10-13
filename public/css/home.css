@@ -36,9 +36,16 @@ footer {
     grid-area: footer;
 }
 
+
 .homeLayout {
     display: grid;
     grid-template-columns: 2, 1fr;
     grid-auto-rows: minmax(auto);
-    grid-template-areas: "logo ""titel" "main" "footer";
+    grid-template-areas: 
+    "nav . . ."
+    "logo logo logo logo"
+    "titel titel titel titel"
+    "main main main main"
+    "footer footer footer footer";
+}
 }
