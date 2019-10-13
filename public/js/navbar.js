@@ -3,8 +3,8 @@
         navToggle: document.querySelector('.nav-toggle'),
         nav: document.querySelector('nav'),
         doToggle: function (e) {
-            this.navToggle.classList.toggle('expanded');
-            this.nav.classList.toggle('expanded');
+            this.navToggle.classList.toggle('js-expanded');
+            this.nav.classList.toggle('js-expanded');
         }
     };
     hamburger.navToggle.addEventListener('click', function (e) { hamburger.doToggle(e); });

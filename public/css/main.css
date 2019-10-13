@@ -35,7 +35,7 @@ body {
     z-index: 1;
   }
   
-  .nav.expanded { left: 0; }
+  .nav.js-expanded { left: 0; }
   
   .nav ul {
     position: relative;
@@ -94,20 +94,20 @@ body {
   
   .nav-toggle .nav-toggle-bar::before { margin-top: -0.8rem; }
   
-  .nav-toggle.expanded .nav-toggle-bar { background: transparent; }
+  .nav-toggle.js-expanded .nav-toggle-bar { background: transparent; }
   
-  .nav-toggle.expanded .nav-toggle-bar::after, .nav-toggle.expanded .nav-toggle-bar::before {
+  .nav-toggle.js-expanded .nav-toggle-bar::after, .nav-toggle.js-expanded .nav-toggle-bar::before {
     background: var(--backgroundColor);
     margin-top: 0;
   }
   
-  .nav-toggle.expanded .nav-toggle-bar::after {
+  .nav-toggle.js-expanded .nav-toggle-bar::after {
     -ms-transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
   }
   
-  .nav-toggle.expanded .nav-toggle-bar::before {
+  .nav-toggle.js-expanded .nav-toggle-bar::before {
     -ms-transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
