@@ -18,10 +18,8 @@ security:
             guard:
                 authenticators:
                     - app.security.facebook_form_authenticator #this calls the authenticator service every page load
-
-#                entry_point: App\security\FacebookFormAuthenticator
             logout:
-                path: /logout
+                path: app.user.logout
 #            remember_me:
 #                secret:   '%APP_SECRET%'
 #                lifetime: 31557600 # 1 year in seconds
@@ -38,3 +36,4 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: ^/admin, roles: ROLE_USER }
+         - { path: ^/camera, roles: ROLE_USER }

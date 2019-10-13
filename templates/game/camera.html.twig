@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/camera.css') }}">
+{% endblock %}
+
+{% block body %}
+    <h1>Camera</h1>
+
+    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
+    <canvas id="canvas" hidden></canvas>
+    <div id="output" hidden>
+        <div id="outputMessage">No QR code detected.</div>
+        <div hidden><b>Data:</b> <span id="outputData"></span></div>
+    </div>
+
+    <div>
+        <span class="btn btn-light">take picture</span>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="module" src="{{ asset('js/lib/jsQR.js') }}"></script>
+    <script src="{{ asset('js/scanner.js') }}"></script>
+{% endblock %}

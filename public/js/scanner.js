@@ -1,60 +1,67 @@
-/*
+var video = document.createElement("video");
+var canvasElement = document.getElementById("canvas");
+var canvas = canvasElement.getContext("2d");
+var loadingMessage = document.getElementById("loadingMessage");
+var outputContainer = document.getElementById("output");
+var outputMessage = document.getElementById("outputMessage");
+var outputData = document.getElementById("outputData");
 
-import QrScanner from '/js/lib/qr-scanner.min.js';
-
-QrScanner.WORKER_PATH = '/js/lib/qr-scanner-worker.min.js';
-
-const video = document.querySelector('video');
-// const qrScanner = new QrScanner(videoElem, result => console.log('decoded qr code:', result));
-
-
-// ####### Web Cam Scanning #######
-QrScanner.hasCamera().then(hasCamera => console.log('camera found: ' + hasCamera));
-const scanner = new QrScanner(video, result => setResult(result));
-scanner.start();
-// document.getElementById('inversion-mode-select').addEventListener('change', event => {
-//     scanner.setInversionMode(event.target.value);
-// });
-*/
-
-
-const code = jsQR(imageData, width, height, options?);
-
-if (code) {
-    console.log("Found QR code", code);
+function drawLine(begin, end, color) {
+    canvas.beginPath();
+    canvas.moveTo(begin.x, begin.y);
+    canvas.lineTo(end.x, end.y);
+    canvas.lineWidth = 4;
+    canvas.strokeStyle = color;
+    canvas.stroke();
 }
 
-function setResult(result) {
-    console.log(result);
+// Use facingMode: environment to attemt to get the front camera on phones
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+    video.srcObject = stream;
+    video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+    video.play();
+    requestAnimationFrame(tick);
+});
 
-    takeSnapshot();
-}
+function tick() {
+    loadingMessage.innerText = "⌛ Loading video..."
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        loadingMessage.hidden = true;
+        canvasElement.hidden = false;
+        outputContainer.hidden = false;
 
+        canvasElement.height = video.videoHeight;
+        canvasElement.width = video.videoWidth;
+        canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+        var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+        var code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: "dontInvert",
+        });
+        if (code) {
+            drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+            drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+            drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+            drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+            outputMessage.hidden = true;
+            outputData.parentElement.hidden = false;
+            outputData.innerText = code.data;
 
-function takeSnapshot(){
+            var dateUrl = canvasElement.toDataURL('png');
 
-    var hidden_canvas = document.querySelector('canvas'),
-        video = document.querySelector('video'),
-        image = document.querySelector('#result'),
+            var msg = {'photo': dateUrl,'code': '123'}
 
-        // Get the exact size of the video element.
-        width = video.videoWidth,
-        height = video.videoHeight,
-
-        // Context object for working with the canvas.
-        context = hidden_canvas.getContext('2d');
-
-    // Set the canvas to the same dimensions as the video.
-    hidden_canvas.width = width;
-    hidden_canvas.height = height;
-
-    // Draw a copy of the current frame from the video on the canvas.
-    context.drawImage(video, 0, 0, width, height);
-
-    // Get an image dataURL from the canvas.
-    var imageDataURL = hidden_canvas.toDataURL('image/png');
-
-    // Set the dataURL as source of an image element, showing the captured photo.
-    image.setAttribute('src', imageDataURL);
-
+            axios.post('/validate-qr', msg)
+        .then(function (response) {
+                console.log(response.data);
+                //todo: show task and s=earned points
+            })
+                .catch(function (error) {
+                    console.log('failed');
+                });
+        } else {
+            outputMessage.hidden = false;
+            outputData.parentElement.hidden = true;
+        }
+    }
+    requestAnimationFrame(tick);
 }

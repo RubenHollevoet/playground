@@ -26,6 +26,12 @@ class GameController extends AbstractController
         ]);
     }
 
+    public function camera() : Response
+    {
+        return $this->render('game/camera.html.twig', [
+        ]);
+    }
+
     public function tasks() : Response
     {
         $tasks = [
@@ -82,7 +88,7 @@ class GameController extends AbstractController
             ]);
         }
 
-        $image = $imageService->base64ToJpeg($response->photo, '/', $this->getUser()->getId().'_'.$qrCode->getTask()->getId().'_'.date('Y-m-d-H-i-s').'.jpg');
+        $image = $imageService->base64ToJpeg($response->photo, '/uploads/qr/', $this->getUser()->getId().'_'.$qrCode->getTask()->getId().'_'.date('Y-m-d-H-i-s').'.jpg');
 
         $subscription = new Subscription();
         $subscription->setStatus(Subscription::STATUS_PRE_APPROVED);
