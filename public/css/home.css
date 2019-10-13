@@ -36,16 +36,22 @@ footer {
     grid-area: footer;
 }
 
+.facebookLogin {
+    grid-area: facebook;
+    color: var(--primaryColor);
+}
+
 
 .homeLayout {
     display: grid;
-    grid-template-columns: 2, 1fr;
+    grid-template-columns: 4, 1fr;
     grid-auto-rows: minmax(auto);
     grid-template-areas: 
     "nav . . ."
     "logo logo logo logo"
     "titel titel titel titel"
     "main main main main"
+    ". . . facebook"
     "footer footer footer footer";
 }
 }

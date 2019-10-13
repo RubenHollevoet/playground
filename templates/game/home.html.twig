@@ -9,9 +9,11 @@
 
 <div class="homeLayout">
     {% if not app.user %}
+    <div class="facebookLogin"> 
         <a href="{{ fbLoginUrl }}" target="_top" class="fb-login-btn">
-            <span class="fa fa-facebook"></span>Login met Facebook
+            <span class="fa fa-facebook" id=""></span>Login met Facebook
         </a>
+        </div>
     {% endif %}
 
     <img class="banner" src="{{ asset('assets/playground.svg') }}" alt="logo">
