@@ -3,15 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-        {% block title %}Welcome!
-        {% endblock %}
+        {% block title %}Playground{% endblock %}
     </title>
 
 
     {% block stylesheets %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('css/effects.css') }}">
     {% endblock %}
@@ -19,29 +20,47 @@
 
 <body>
 
+<header>
     <div class="nav-toggle">
         <div class="nav-toggle-bar"></div>
     </div>
     <nav class="nav">
         <ul>
-            <li><a href="{{ path('app.game.home') }}">Playground<img src="{{ asset('assets/playground.svg') }}"
-                        alt="logo"></a></li>
             <li><a href="{{ path('app.game.camera') }}">Camera</a></li>
             <li><a href="{{ path('app.game.tasks') }}">Opdrachten</a></li>
             <li><a href="{{ path('app.game.events') }}">Kalender</a></li>
             <li><a href="{{ path('app.game.leaderboard') }}">Scorebord</a></li>
             <li><a href="{{ path('app.game.rewards') }}">Prijzen</a></li>
             <li><a href="{{ path('app.game.rules') }}">Regels</a></li>
-            <li><a href="{{ path('easyadmin') }}">Admin</a></li>
         </ul>
     </nav>
-    {% if app.user %}
-    <div>
-        <img src="{{ app.user.picture|default(asset('assets/profile_placeholder.png')) }}" class="profilePicture"
-            alt="profile picture" width="42" height="42">
-        {{ app.user.username }}
-    </div>
+    <a href="{{ path('app.game.home') }}">
+        <img src="{{ asset('assets/playground.svg') }}"
+             alt="logo" width="92" height="92" style="padding-right: 0">
+    </a>
+
+    <span class="grow1"></span>
+
+    {% if is_granted('ROLE_USER') %}
+        <div>
+            <a href="{{ path('easyadmin') }}" class="btn btn-outline-light">Admin</a>
+        </div>
     {% endif %}
+
+    {% if app.user %}
+            <div class="avatar-box">
+                <img src="{{ app.user.picture|default(asset('assets/profile_placeholder.png')) }}" class="profilePicture"
+                 alt="profile picture" width="42" height="42">
+            <div>
+                <span>{{ app.user.firstName }}</span>
+                <br>
+                <span>{{ app.user.lastName }}</span>
+            </div>
+        </div>
+    {% endif %}
+</header>
+
+
 
     {% for label, messages in app.flashes %}
     {% for message in messages %}

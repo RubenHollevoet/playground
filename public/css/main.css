@@ -14,6 +14,34 @@ body {
     color: var(--primaryColor);
 }
 
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 96px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+header > * {
+    padding-right: 26px;
+}
+
+.avatar-box {
+    display: flex;
+    line-height: 1.2;
+}
+
+.avatar-box > img {
+    margin-right: 6px;
+}
+
+.grow1 {
+    flex-grow: 1;
+}
+
 .nav {
     display: grid;
     grid-area: nav;
@@ -29,7 +57,7 @@ body {
     height: auto;
     left: -30rem;
     padding: 6rem 2rem 2rem 2rem;
-    position: fixed;
+    position: relative;
     top: 0;
     width: auto;
     z-index: 1;
@@ -112,3 +140,24 @@ body {
     -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
   }
+
+
+
+.fb-login-btn {
+    border-radius: 8px;
+    background-color: #0084ff;
+    color: white;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    padding: 11px 25px 11px 20px;
+    font-size: 21px;
+    white-space: nowrap;
+}
+
+.fb-login-btn:hover {
+    color: white;
+    text-decoration: none;
+}
+
+.fb-login-btn > .fa {
+    padding-right: 6px;
+}
