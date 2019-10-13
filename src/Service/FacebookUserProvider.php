@@ -60,6 +60,7 @@ class FacebookUserProvider
     {
         $fb = $this->getFacebook();
 
+        $_SESSION['FBRLH_state']=$_GET['state'];
         $helper = $fb->getRedirectLoginHelper();
 
         try {
@@ -196,7 +197,12 @@ class FacebookUserProvider
 
     public function getLoginUrl()
     {
+        if(!session_id()) {
+            session_start();
+        }
+
         $fb = $this->getFacebook();
+
         $helper = $fb->getRedirectLoginHelper();
         $permissions = ['email']; // Optional permissions
         return $helper->getLoginUrl($this->param_facebook_oauth_redirect, $permissions);
@@ -215,6 +221,9 @@ class FacebookUserProvider
     }
 
     private function getFacebook() {
+        if (!session_id()) {
+            session_start();
+        }
 
         $fb = new Facebook([
             'app_id' => $this->param_facebook_app_id,

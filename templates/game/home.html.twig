@@ -8,21 +8,22 @@
 {% block body %}
 
 <div class="homeLayout">
-    {% if not app.user %}
-    <div class="facebookLogin"> 
-        <a href="{{ fbLoginUrl }}" target="_top" class="fb-login-btn">
-            <span class="fa fa-facebook" id=""></span>Login met Facebook
-        </a>
-        </div>
-    {% endif %}
-
     <img class="banner" src="{{ asset('assets/playground.svg') }}" alt="logo">
 
     <h1 class="focus-in-contract-bck">Playground</h1>
 
     <div class="mainLayout">
-    <p>Coming Soon</p>
-    <p id="subtext">Voorjaar 2020</p>
+        <p>Coming Soon</p>
+        <p id="subtext">Voorjaar 2020</p>
+
+        {% if not app.user %}
+            <h3>pre register now</h3>
+            <div class="facebookLogin">
+                <a href="{{ fbLoginUrl }}" target="_top" class="fb-login-btn">
+                    <span class="fa fa-facebook" id=""></span>Login met Facebook
+                </a>
+            </div>
+        {% endif %}
     </div>
 </div>
 
