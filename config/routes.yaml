@@ -22,6 +22,16 @@ app.game.leaderboard:
     path: /leaderboard
     controller: App\Controller\GameController::leaderboard
 
+# post calls
+
+app.game.validate_qr:
+    path: /validate-qr
+    controller: App\Controller\GameController::postQrCode
+
+
+
+# authentication
+
 app.user.login:
     path: /facebookResponse
     controller: App\Controller\UserController::loginResponse

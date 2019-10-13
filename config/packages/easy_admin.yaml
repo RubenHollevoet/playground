@@ -1,9 +1,20 @@
 easy_admin:
     entities:
-        # List the entity class name you want to manage
-        - App\Entity\User
-        - App\Entity\Task
-        - App\Entity\Subscription
-        - App\Entity\QrCode
+        User:
+            class: App\Entity\User
+        Subscription:
+            class: App\Entity\Subscription
+            list:
+                fields:
+                    - id
+                    - task
+                    - user
+                    - status
+                    - { property: 'image', type: 'image', base_path: '/' }
+        QrCode:
+            class: App\Entity\QrCode
+        Task:
+            class: App\Entity\Task
+
     user:
         name_property_path: 'username'

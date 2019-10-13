@@ -157,7 +157,6 @@ class User implements UserInterface
         return $this;
     }
 
-
     public function getUsername()
     {
         return $this->firstName.' '.$this->lastName;
@@ -176,5 +175,10 @@ class User implements UserInterface
     public function getPassword()
     {
         return '';
+    }
+
+    public function __toString()
+    {
+        return $this->getUsername();
     }
 }

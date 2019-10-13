@@ -24,13 +24,18 @@ class QrCode
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Task", inversedBy="qrCodes")
+     * @ORM\Column(type="string")
      */
     private $code;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Task", inversedBy="qrCodes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $task;
+
     public function __construct()
     {
-        $this->code = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -39,28 +44,35 @@ class QrCode
     }
 
     /**
-     * @return Collection|Task[]
+     * @return string
      */
-    public function getCode(): Collection
+    public function getCode(): ?string
     {
         return $this->code;
     }
 
-    public function addCode(Task $code): self
+    /**
+     * @param string $code
+     */
+    public function setCode(string $code): void
     {
-        if (!$this->code->contains($code)) {
-            $this->code[] = $code;
-        }
+        $this->code = $code;
+    }
+
+    public function getTask(): ?Task
+    {
+        return $this->task;
+    }
+
+    public function setTask(?Task $task): self
+    {
+        $this->task = $task;
 
         return $this;
     }
 
-    public function removeCode(Task $code): self
+    public function __toString(): string
     {
-        if ($this->code->contains($code)) {
-            $this->code->removeElement($code);
-        }
-
-        return $this;
+        return $this->code;
     }
 }

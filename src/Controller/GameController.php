@@ -4,8 +4,15 @@
 namespace App\Controller;
 
 
+use App\Entity\QrCode;
+use App\Entity\Subscription;
 use App\Service\FacebookUserProvider;
+use App\Service\ImageService;
+use AppTestBundle\Entity\FunctionalTests\Image;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class GameController extends AbstractController
@@ -57,5 +64,42 @@ class GameController extends AbstractController
     public function leaderboard() : Response
     {
         return $this->render('game/leaderboard.html.twig');
+    }
+
+    public function postQrCode(Request $request, EntityManagerInterface $em, ImageService $imageService) : JsonResponse
+    {
+
+        $response = json_decode($request->getContent());
+
+        /**
+         * @var  $qrCode QrCode
+         */
+        $qrCode = $em->getRepository(QrCode::class)->findOneBy(['code' => $response->code]);
+
+        if(!$qrCode) {
+            return new JsonResponse([
+                'status' => 'unknown',
+            ]);
+        }
+
+        $image = $imageService->base64ToJpeg($response->photo, '/', $this->getUser()->getId().'_'.$qrCode->getTask()->getId().'_'.date('Y-m-d-H-i-s').'.jpg');
+
+        $subscription = new Subscription();
+        $subscription->setStatus(Subscription::STATUS_PRE_APPROVED);
+        $subscription->setTask($qrCode->getTask());
+        $subscription->setUser($this->getUser());
+        $subscription->setImage($image);
+
+        $em->persist($subscription);
+        $em->flush();
+
+//        var_dump($request->request->get('code')); die;
+
+        $response = [
+            'status' => 'ok',
+            'points' => 10,
+        ];
+
+        return new JsonResponse($response);
     }
 }

@@ -1,12 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-{{ parent() }}
-<link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 {% endblock %}
 
 {% block body %}
-{#    <h1>home</h1>#}
 
 <div class="homeLayout">
     {% if not app.user %}
@@ -23,7 +22,121 @@
     <p id="subtext">Voorjaar 2020</p>
     </div>
 </div>
+    {#    <video></video>
 
+        <canvas></canvas>
+
+        <img id="result" src="" alt="">#}
+
+    <p>Pure JavaScript QR code decoding library.</p>
+    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
+    <canvas id="canvas" hidden></canvas>
+    <div id="output" hidden>
+        <div id="outputMessage">No QR code detected.</div>
+        <div hidden><b>Data:</b> <span id="outputData"></span></div>
+    </div>
+
+    <a href="%dataURI%" download id="downloadImage">download</a>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+    <script type="module">
+        // import QrScanner from 'path/to/qr-scanner.min.js';
+    </script>
+    {#    <script type="module" src="{{ asset('js/scanner.js') }}"></script>#}
+    <script type="module" src="{{ asset('js/lib/jsQR.js') }}"></script>
+
+    <script>
+        var video = document.createElement("video");
+        var canvasElement = document.getElementById("canvas");
+        var canvas = canvasElement.getContext("2d");
+        var loadingMessage = document.getElementById("loadingMessage");
+        var outputContainer = document.getElementById("output");
+        var outputMessage = document.getElementById("outputMessage");
+        var outputData = document.getElementById("outputData");
+
+        function drawLine(begin, end, color) {
+            canvas.beginPath();
+            canvas.moveTo(begin.x, begin.y);
+            canvas.lineTo(end.x, end.y);
+            canvas.lineWidth = 4;
+            canvas.strokeStyle = color;
+            canvas.stroke();
+        }
+
+        // Use facingMode: environment to attemt to get the front camera on phones
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+            video.srcObject = stream;
+            video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+            video.play();
+            requestAnimationFrame(tick);
+        });
+
+        function tick() {
+            loadingMessage.innerText = "⌛ Loading video..."
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                loadingMessage.hidden = true;
+                canvasElement.hidden = false;
+                outputContainer.hidden = false;
+
+                canvasElement.height = video.videoHeight;
+                canvasElement.width = video.videoWidth;
+                canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+                var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                var code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                });
+                if (code) {
+                    drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+                    drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+                    drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+                    drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+                    outputMessage.hidden = true;
+                    outputData.parentElement.hidden = false;
+                    outputData.innerText = code.data;
+
+
+                    var dateUrl = canvasElement.toDataURL('png');
+
+                    var msg = {'photo': dateUrl,'code': '123'}
+
+                    axios.post('{{ path('app.game.validate_qr') }}', msg)
+                        .then(function (response) {
+                            console.log(response.data);
+                            // if(response.data.status === 'ok') {
+                            //     self.submitStatus = 200;
+                            //     self.tripData.id = response.data.tripId;
+                            //
+                            //     new QRCode(document.getElementById("qrcode"), "onkosten.kazourmt.be/add?t=" + self.tripData.id);
+                            // }
+                            // else {
+                            //     self.submitStatus = 500;
+                            //     console.log(self.formErrors);
+                            //     self.formErrors = response.data.errors;
+                            // }
+                        })
+                        .catch(function (error) {
+                            console.log('failed');
+                        });
+
+                    document.getElementById('downloadImage').href = dateUrl;
+
+
+                } else {
+                    outputMessage.hidden = false;
+                    outputData.parentElement.hidden = true;
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+
+
+    </script>
 
 
 {% endblock %}
+

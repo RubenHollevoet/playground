@@ -15,8 +15,9 @@ class Subscription
     use SoftDeleteable;
 
     public const STATUS_PENDING = 0;
-    public const STATUS_APPROVED = 1;
-    public const STATUS_DISAPPROVED = 2;
+    public const STATUS_PRE_APPROVED = 1;
+    public const STATUS_APPROVED = 2;
+    public const STATUS_DISAPPROVED = 3;
 
     /**
      * @ORM\Id()
@@ -41,6 +42,11 @@ class Subscription
      * @ORM\Column(type="smallint")
      */
     private $status = self::STATUS_PENDING;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $image;
 
     public function getId(): ?int
     {
@@ -81,5 +87,22 @@ class Subscription
         $this->status = $status;
 
         return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return 'todo';
     }
 }
