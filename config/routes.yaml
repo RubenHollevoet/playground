@@ -2,6 +2,10 @@ app.game.home:
     path: /
     controller: App\Controller\GameController::index
 
+app.game.camera:
+    path: /camera
+    controller: App\Controller\GameController::camera
+
 app.game.tasks:
     path: /tasks
     controller: App\Controller\GameController::tasks
@@ -35,3 +39,6 @@ app.game.validate_qr:
 app.user.login:
     path: /facebookResponse
     controller: App\Controller\UserController::loginResponse
+
+app.user.logout:
+    path: /logout
