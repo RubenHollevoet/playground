@@ -71,16 +71,25 @@ class FacebookFormAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
+        //temp
+        return $this->tokenStorage->getToken() === null;
+
         return ($this->tokenStorage->getToken() === null) && $this->session->has('fb_access_token');
     }
 
     public function getCredentials(Request $request)
     {
+        //temp
+        return '';
+
         return $this->facebookUserProvider->getCurrentUser();
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
+        //temp
+        return $this->em->getRepository(User::class)->find(1);
+
         $fbUserId = $credentials['id'];
 
         if(!$this->facebookUserProvider->createOrUpdateUser($credentials)) {
