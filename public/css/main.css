@@ -2,6 +2,7 @@
     --primaryColor: #eee;
     --secondaryColor: #666;
     --backgroundColor: #444;
+    --hoogteBanner: 96px;
 }
 
 html {
@@ -18,7 +19,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 96px;
+    height: var(--hoogteBanner);
     position: fixed;
     top: 0;
     left: 0;

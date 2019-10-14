@@ -1,10 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <h1>Opdrachten</h1>
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/tasks.css') }}">
+{% endblock %}
 
+{% block body %}
+<div class="taskLayout">
+    <h1>Opdrachten</h1>
     {% for task in tasks %}
-        <li>{{ task.name }} - <small>{{ task.score }} punten</small></li>
+        <li class="taskItem">{{ task.name }} - <small>{{ task.score }} punten</small>
+        <hr></li>
     {% endfor %}
-    {{dump(tasks)}}
+    </div>
 {% endblock %}

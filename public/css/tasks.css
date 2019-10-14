@@ -1,0 +1,25 @@
+:root{
+    --primaryColor: #eee;
+    --secondaryColor: #888;
+    --hoogteBanner: 96px;
+}
+
+.taskLayout {
+    display: grid;
+    margin-top: var(--hoogteBanner);
+    margin-left: 1em;
+}
+
+.taskItem {
+    font-size: medium;
+}
+
+hr {
+    border-top-color: var(--primaryColor);
+}
+
+.taskLayout li {
+    margin-left: 2rem;
+    margin-right: 3rem;
+    list-style: none;
+}
