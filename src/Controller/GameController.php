@@ -43,6 +43,18 @@ class GameController extends AbstractController
                 'name' => 'opdracht 5',
                 'score' => 5
             ],
+            [
+                'name' => 'opdracht 10',
+                'score' => 25
+            ],
+            [
+                'name' => 'opdracht 35',
+                'score' => 10
+            ],
+            [
+                'name' => 'opdracht 54',
+                'score' => 15
+            ],
         ];
 
         return $this->render('game/tasks.html.twig',

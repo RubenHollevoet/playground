@@ -45,7 +45,7 @@ header > * {
 }
 
 .nav {
-    display: flex;
+    display: none;
     -webkit-transition: top 0.5s ease;
     -moz-transition: top 0.5s ease;
     -ms-transition: top 0.5s ease;
@@ -60,13 +60,16 @@ header > * {
     top: -450px;
     padding: 14em 2rem 2rem 2rem;
     position: relative;
-    width: 0px;
+    width: 250px;
     z-index: 1;
   }
   
   .nav.js-expanded { 
+    transition-delay: 0.5;
+    transition-timing-function: ease;
     top: 0;
     width: 250px;
+    display: flex;
   }
   
   .nav ul {
@@ -103,6 +106,15 @@ header > * {
   header a:hover{
     text-decoration: underline;
     color: var(--primaryColor);
+  }
+
+  .title {
+    display: block;
+    margin-left: 5em;
+  }
+
+  .title.js-expanded {
+    display: none;
   }
 
   .nav-toggle {
